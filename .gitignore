@@ -1,0 +1,3 @@
+*.pyc
+export_test.csv
+docker-compose.yml

@@ -34,9 +34,9 @@ def cassandra_hive_tracking():
     q = Queue(connection=conn)
 
     job = q.enqueue(count_words_at_url, 'http://heroku.com')
-    time.sleep(10)
+    # time.sleep(5)
 
-    return jsonify(results = job.result)
+    return jsonify(results = "results is in the log")
 
 
 from flask import got_request_exception

@@ -3,6 +3,7 @@ import time
 
 from flask import Flask, jsonify, request, url_for
 from tasks import count_words_at_url, add
+from worker import conn
 
 from rq import Queue
 from redis import Redis
@@ -21,7 +22,7 @@ def internal_error(exception):
     
 @app.route('/')
 def hello_world():
-	return 'Don\'t panic! Server is running at : ' + CASSANDRA_SERVER
+	return 'Don\'t panic! Server is running at.'
 
 @app.route('/cassandra/export')
 def test_cassandra():
@@ -30,18 +31,11 @@ def test_cassandra():
 @app.route('/rq', methods=['POST'])
 def cassandra_hive_tracking():
     
-    # redis_conn = Redis(host='192.168.59.103')
-    # q = Queue(connection=redis_conn)  # no args implies the default queue
+    q = Queue(connection=conn)
 
-    # job = q.enqueue(count_words_at_url, 'http://nvie.com')
-    job = add.delay(3, 4)
+    job = q.enqueue(count_words_at_url, 'http://heroku.com')
     time.sleep(10)
 
-    # job = q.enqueue_call(transport_data.cassandra_to_hadoop, 
-    #     args=(cassandra_tracking_cluster, "tracking_events", hadoop_database, "tracking_events_temp", int(settings.FETCH_SIZE)),
-    #     timeout=21600)
-
-    # return jsonify(results = "resultsss")
     return jsonify(results = job.result)
 
 
